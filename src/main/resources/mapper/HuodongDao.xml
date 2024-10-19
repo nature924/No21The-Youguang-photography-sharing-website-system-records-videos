@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dao.HuodongDao">
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        a.id as id
+        ,a.huodong_uuid_number as huodongUuidNumber
+        ,a.huodong_name as huodongName
+        ,a.huodong_photo as huodongPhoto
+        ,a.huodong_types as huodongTypes
+        ,a.huodong_clicknum as huodongClicknum
+        ,a.zan_number as zanNumber
+        ,a.cai_number as caiNumber
+        ,a.huodong_content as huodongContent
+        ,a.huodong_delete as huodongDelete
+        ,a.insert_time as insertTime
+        ,a.create_time as createTime
+    </sql>
+    <select id="selectListView" parameterType="map" resultType="com.entity.view.HuodongView" >
+        SELECT
+        <include refid="Base_Column_List" />
+        <!-- 级联表的字段 -->
+
+        FROM huodong  a
+
+        <where>
+            <if test="params.ids != null">
+                and a.id in
+                <foreach item="item" index="index" collection="params.ids" open="(" separator="," close=")">
+                #{item}
+                </foreach>
+            </if>
+            <if test=" params.huodongUuidNumber != '' and params.huodongUuidNumber != null and params.huodongUuidNumber != 'null' ">
+                and a.huodong_uuid_number like CONCAT('%',#{params.huodongUuidNumber},'%')
+            </if>
+            <if test=" params.huodongName != '' and params.huodongName != null and params.huodongName != 'null' ">
+                and a.huodong_name like CONCAT('%',#{params.huodongName},'%')
+            </if>
+            <if test="params.huodongTypes != null and params.huodongTypes != ''">
+                and a.huodong_types = #{params.huodongTypes}
+            </if>
+            <if test="params.huodongClicknumStart != null and params.huodongClicknumStart != ''">
+                <![CDATA[  and a.huodong_clicknum >= #{params.huodongClicknumStart}   ]]>
+            </if>
+            <if test="params.huodongClicknumEnd != null and params.huodongClicknumEnd != ''">
+                <![CDATA[  and a.huodong_clicknum <= #{params.huodongClicknumEnd}   ]]>
+            </if>
+             <if test="params.huodongClicknum != null and params.huodongClicknum != ''">
+                and a.huodong_clicknum = #{params.huodongClicknum}
+             </if>
+            <if test="params.zanNumberStart != null and params.zanNumberStart != ''">
+                <![CDATA[  and a.zan_number >= #{params.zanNumberStart}   ]]>
+            </if>
+            <if test="params.zanNumberEnd != null and params.zanNumberEnd != ''">
+                <![CDATA[  and a.zan_number <= #{params.zanNumberEnd}   ]]>
+            </if>
+             <if test="params.zanNumber != null and params.zanNumber != ''">
+                and a.zan_number = #{params.zanNumber}
+             </if>
+            <if test="params.caiNumberStart != null and params.caiNumberStart != ''">
+                <![CDATA[  and a.cai_number >= #{params.caiNumberStart}   ]]>
+            </if>
+            <if test="params.caiNumberEnd != null and params.caiNumberEnd != ''">
+                <![CDATA[  and a.cai_number <= #{params.caiNumberEnd}   ]]>
+            </if>
+             <if test="params.caiNumber != null and params.caiNumber != ''">
+                and a.cai_number = #{params.caiNumber}
+             </if>
+            <if test=" params.huodongContent != '' and params.huodongContent != null and params.huodongContent != 'null' ">
+                and a.huodong_content like CONCAT('%',#{params.huodongContent},'%')
+            </if>
+            <if test="params.huodongDeleteStart != null and params.huodongDeleteStart != ''">
+                <![CDATA[  and a.huodong_delete >= #{params.huodongDeleteStart}   ]]>
+            </if>
+            <if test="params.huodongDeleteEnd != null and params.huodongDeleteEnd != ''">
+                <![CDATA[  and a.huodong_delete <= #{params.huodongDeleteEnd}   ]]>
+            </if>
+             <if test="params.huodongDelete != null and params.huodongDelete != ''">
+                and a.huodong_delete = #{params.huodongDelete}
+             </if>
+            <if test=" params.insertTimeStart != '' and params.insertTimeStart != null ">
+                <![CDATA[  and UNIX_TIMESTAMP(a.insert_time) >= UNIX_TIMESTAMP(#{params.insertTimeStart}) ]]>
+            </if>
+            <if test=" params.insertTimeEnd != '' and params.insertTimeEnd != null ">
+                <![CDATA[  and UNIX_TIMESTAMP(a.insert_time) <= UNIX_TIMESTAMP(#{params.insertTimeEnd}) ]]>
+            </if>
+
+        </where>
+        order by a.${params.sort} ${params.order}
+    </select>
+
+</mapper>

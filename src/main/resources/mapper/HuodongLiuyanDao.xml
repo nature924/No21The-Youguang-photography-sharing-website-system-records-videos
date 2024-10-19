@@ -1,0 +1,170 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dao.HuodongLiuyanDao">
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        a.id as id
+        ,a.huodong_id as huodongId
+        ,a.yonghu_id as yonghuId
+        ,a.huodong_liuyan_text as huodongLiuyanText
+        ,a.insert_time as insertTime
+        ,a.reply_text as replyText
+        ,a.update_time as updateTime
+        ,a.create_time as createTime
+    </sql>
+    <select id="selectListView" parameterType="map" resultType="com.entity.view.HuodongLiuyanView" >
+        SELECT
+        <include refid="Base_Column_List" />
+        <!-- 级联表的字段 -->
+        ,huodong.huodong_uuid_number as huodongUuidNumber
+        ,huodong.huodong_name as huodongName
+        ,huodong.huodong_photo as huodongPhoto
+        ,huodong.huodong_types as huodongTypes
+        ,huodong.huodong_clicknum as huodongClicknum
+        ,huodong.zan_number as zanNumber
+        ,huodong.cai_number as caiNumber
+        ,huodong.huodong_content as huodongContent
+        ,huodong.huodong_delete as huodongDelete
+        ,yonghu.yonghu_name as yonghuName
+        ,yonghu.yonghu_phone as yonghuPhone
+        ,yonghu.yonghu_id_number as yonghuIdNumber
+        ,yonghu.yonghu_photo as yonghuPhoto
+        ,yonghu.yonghu_email as yonghuEmail
+        ,yonghu.yonghu_delete as yonghuDelete
+
+        FROM huodong_liuyan  a
+        left JOIN huodong huodong ON a.huodong_id = huodong.id
+        left JOIN yonghu yonghu ON a.yonghu_id = yonghu.id
+
+        <where>
+            <if test="params.ids != null">
+                and a.id in
+                <foreach item="item" index="index" collection="params.ids" open="(" separator="," close=")">
+                #{item}
+                </foreach>
+            </if>
+            <if test="params.huodongId != null and params.huodongId != ''">
+                and (
+                    a.huodong_id = #{params.huodongId}
+                )
+            </if>
+            <if test="params.yonghuId != null and params.yonghuId != ''">
+                and (
+                    a.yonghu_id = #{params.yonghuId}
+                )
+            </if>
+            <if test=" params.huodongLiuyanText != '' and params.huodongLiuyanText != null and params.huodongLiuyanText != 'null' ">
+                and a.huodong_liuyan_text like CONCAT('%',#{params.huodongLiuyanText},'%')
+            </if>
+            <if test=" params.insertTimeStart != '' and params.insertTimeStart != null ">
+                <![CDATA[  and UNIX_TIMESTAMP(a.insert_time) >= UNIX_TIMESTAMP(#{params.insertTimeStart}) ]]>
+            </if>
+            <if test=" params.insertTimeEnd != '' and params.insertTimeEnd != null ">
+                <![CDATA[  and UNIX_TIMESTAMP(a.insert_time) <= UNIX_TIMESTAMP(#{params.insertTimeEnd}) ]]>
+            </if>
+            <if test=" params.replyText != '' and params.replyText != null and params.replyText != 'null' ">
+                and a.reply_text like CONCAT('%',#{params.replyText},'%')
+            </if>
+            <if test=" params.updateTimeStart != '' and params.updateTimeStart != null ">
+                <![CDATA[  and UNIX_TIMESTAMP(a.update_time) >= UNIX_TIMESTAMP(#{params.updateTimeStart}) ]]>
+            </if>
+            <if test=" params.updateTimeEnd != '' and params.updateTimeEnd != null ">
+                <![CDATA[  and UNIX_TIMESTAMP(a.update_time) <= UNIX_TIMESTAMP(#{params.updateTimeEnd}) ]]>
+            </if>
+
+                <!-- 判断活动的id不为空 -->
+            <if test=" params.huodongIdNotNull != '' and params.huodongIdNotNull != null and params.huodongIdNotNull != 'null' ">
+                and a.huodong_id IS NOT NULL
+            </if>
+            <if test=" params.huodongUuidNumber != '' and params.huodongUuidNumber != null and params.huodongUuidNumber != 'null' ">
+                and huodong.huodong_uuid_number like CONCAT('%',#{params.huodongUuidNumber},'%')
+            </if>
+            <if test=" params.huodongName != '' and params.huodongName != null and params.huodongName != 'null' ">
+                and huodong.huodong_name like CONCAT('%',#{params.huodongName},'%')
+            </if>
+            <if test="params.huodongTypes != null  and params.huodongTypes != ''">
+                and huodong.huodong_types = #{params.huodongTypes}
+            </if>
+
+            <if test="params.huodongClicknumStart != null  and params.huodongClicknumStart != '' ">
+                <![CDATA[  and huodong.huodong_clicknum >= #{params.huodongClicknumStart}   ]]>
+            </if>
+            <if test="params.huodongClicknumEnd != null  and params.huodongClicknumEnd != '' ">
+                <![CDATA[  and huodong.huodong_clicknum <= #{params.huodongClicknumEnd}   ]]>
+            </if>
+            <if test="params.huodongClicknum != null  and params.huodongClicknum != '' ">
+                and huodong.huodong_clicknum = #{params.huodongClicknum}
+            </if>
+            <if test="params.zanNumberStart != null  and params.zanNumberStart != '' ">
+                <![CDATA[  and huodong.zan_number >= #{params.zanNumberStart}   ]]>
+            </if>
+            <if test="params.zanNumberEnd != null  and params.zanNumberEnd != '' ">
+                <![CDATA[  and huodong.zan_number <= #{params.zanNumberEnd}   ]]>
+            </if>
+            <if test="params.zanNumber != null  and params.zanNumber != '' ">
+                and huodong.zan_number = #{params.zanNumber}
+            </if>
+            <if test="params.caiNumberStart != null  and params.caiNumberStart != '' ">
+                <![CDATA[  and huodong.cai_number >= #{params.caiNumberStart}   ]]>
+            </if>
+            <if test="params.caiNumberEnd != null  and params.caiNumberEnd != '' ">
+                <![CDATA[  and huodong.cai_number <= #{params.caiNumberEnd}   ]]>
+            </if>
+            <if test="params.caiNumber != null  and params.caiNumber != '' ">
+                and huodong.cai_number = #{params.caiNumber}
+            </if>
+            <if test=" params.huodongContent != '' and params.huodongContent != null and params.huodongContent != 'null' ">
+                and huodong.huodong_content like CONCAT('%',#{params.huodongContent},'%')
+            </if>
+            <if test="params.huodongDeleteStart != null  and params.huodongDeleteStart != '' ">
+                <![CDATA[  and huodong.huodong_delete >= #{params.huodongDeleteStart}   ]]>
+            </if>
+            <if test="params.huodongDeleteEnd != null  and params.huodongDeleteEnd != '' ">
+                <![CDATA[  and huodong.huodong_delete <= #{params.huodongDeleteEnd}   ]]>
+            </if>
+            <if test="params.huodongDelete != null  and params.huodongDelete != '' ">
+                and huodong.huodong_delete = #{params.huodongDelete}
+            </if>
+            <if test=" params.insertTimeStart != '' and params.insertTimeStart != null ">
+                <![CDATA[  and UNIX_TIMESTAMP(huodong.insert_time) >= UNIX_TIMESTAMP(#{params.insertTimeStart}) ]]>
+            </if>
+            <if test=" params.insertTimeEnd != '' and params.insertTimeEnd != null ">
+                <![CDATA[  and UNIX_TIMESTAMP(huodong.insert_time) <= UNIX_TIMESTAMP(#{params.insertTimeEnd}) ]]>
+            </if>
+                <!-- 判断用户的id不为空 -->
+            <if test=" params.yonghuIdNotNull != '' and params.yonghuIdNotNull != null and params.yonghuIdNotNull != 'null' ">
+                and a.yonghu_id IS NOT NULL
+            </if>
+            <if test=" params.yonghuName != '' and params.yonghuName != null and params.yonghuName != 'null' ">
+                and yonghu.yonghu_name like CONCAT('%',#{params.yonghuName},'%')
+            </if>
+            <if test=" params.yonghuPhone != '' and params.yonghuPhone != null and params.yonghuPhone != 'null' ">
+                and yonghu.yonghu_phone like CONCAT('%',#{params.yonghuPhone},'%')
+            </if>
+            <if test=" params.yonghuIdNumber != '' and params.yonghuIdNumber != null and params.yonghuIdNumber != 'null' ">
+                and yonghu.yonghu_id_number like CONCAT('%',#{params.yonghuIdNumber},'%')
+            </if>
+            <if test=" params.yonghuEmail != '' and params.yonghuEmail != null and params.yonghuEmail != 'null' ">
+                and yonghu.yonghu_email like CONCAT('%',#{params.yonghuEmail},'%')
+            </if>
+            <if test="params.yonghuDeleteStart != null  and params.yonghuDeleteStart != '' ">
+                <![CDATA[  and yonghu.yonghu_delete >= #{params.yonghuDeleteStart}   ]]>
+            </if>
+            <if test="params.yonghuDeleteEnd != null  and params.yonghuDeleteEnd != '' ">
+                <![CDATA[  and yonghu.yonghu_delete <= #{params.yonghuDeleteEnd}   ]]>
+            </if>
+            <if test="params.yonghuDelete != null  and params.yonghuDelete != '' ">
+                and yonghu.yonghu_delete = #{params.yonghuDelete}
+            </if>
+            <if test=" params.insertTimeStart != '' and params.insertTimeStart != null ">
+                <![CDATA[  and UNIX_TIMESTAMP(yonghu.insert_time) >= UNIX_TIMESTAMP(#{params.insertTimeStart}) ]]>
+            </if>
+            <if test=" params.insertTimeEnd != '' and params.insertTimeEnd != null ">
+                <![CDATA[  and UNIX_TIMESTAMP(yonghu.insert_time) <= UNIX_TIMESTAMP(#{params.insertTimeEnd}) ]]>
+            </if>
+        </where>
+        order by a.${params.sort} ${params.order}
+    </select>
+
+</mapper>

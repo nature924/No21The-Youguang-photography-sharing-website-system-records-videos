@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dao.SucaiDao">
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        a.id as id
+        ,a.sucai_uuid_number as sucaiUuidNumber
+        ,a.sucai_name as sucaiName
+        ,a.sucai_photo as sucaiPhoto
+        ,a.sucai_file as sucaiFile
+        ,a.sucai_types as sucaiTypes
+        ,a.sucai_clicknum as sucaiClicknum
+        ,a.zan_number as zanNumber
+        ,a.cai_number as caiNumber
+        ,a.sucai_content as sucaiContent
+        ,a.sucai_delete as sucaiDelete
+        ,a.insert_time as insertTime
+        ,a.create_time as createTime
+    </sql>
+    <select id="selectListView" parameterType="map" resultType="com.entity.view.SucaiView" >
+        SELECT
+        <include refid="Base_Column_List" />
+        <!-- 级联表的字段 -->
+
+        FROM sucai  a
+
+        <where>
+            <if test="params.ids != null">
+                and a.id in
+                <foreach item="item" index="index" collection="params.ids" open="(" separator="," close=")">
+                #{item}
+                </foreach>
+            </if>
+            <if test=" params.sucaiUuidNumber != '' and params.sucaiUuidNumber != null and params.sucaiUuidNumber != 'null' ">
+                and a.sucai_uuid_number like CONCAT('%',#{params.sucaiUuidNumber},'%')
+            </if>
+            <if test=" params.sucaiName != '' and params.sucaiName != null and params.sucaiName != 'null' ">
+                and a.sucai_name like CONCAT('%',#{params.sucaiName},'%')
+            </if>
+            <if test="params.sucaiTypes != null and params.sucaiTypes != ''">
+                and a.sucai_types = #{params.sucaiTypes}
+            </if>
+            <if test="params.sucaiClicknumStart != null and params.sucaiClicknumStart != ''">
+                <![CDATA[  and a.sucai_clicknum >= #{params.sucaiClicknumStart}   ]]>
+            </if>
+            <if test="params.sucaiClicknumEnd != null and params.sucaiClicknumEnd != ''">
+                <![CDATA[  and a.sucai_clicknum <= #{params.sucaiClicknumEnd}   ]]>
+            </if>
+             <if test="params.sucaiClicknum != null and params.sucaiClicknum != ''">
+                and a.sucai_clicknum = #{params.sucaiClicknum}
+             </if>
+            <if test="params.zanNumberStart != null and params.zanNumberStart != ''">
+                <![CDATA[  and a.zan_number >= #{params.zanNumberStart}   ]]>
+            </if>
+            <if test="params.zanNumberEnd != null and params.zanNumberEnd != ''">
+                <![CDATA[  and a.zan_number <= #{params.zanNumberEnd}   ]]>
+            </if>
+             <if test="params.zanNumber != null and params.zanNumber != ''">
+                and a.zan_number = #{params.zanNumber}
+             </if>
+            <if test="params.caiNumberStart != null and params.caiNumberStart != ''">
+                <![CDATA[  and a.cai_number >= #{params.caiNumberStart}   ]]>
+            </if>
+            <if test="params.caiNumberEnd != null and params.caiNumberEnd != ''">
+                <![CDATA[  and a.cai_number <= #{params.caiNumberEnd}   ]]>
+            </if>
+             <if test="params.caiNumber != null and params.caiNumber != ''">
+                and a.cai_number = #{params.caiNumber}
+             </if>
+            <if test=" params.sucaiContent != '' and params.sucaiContent != null and params.sucaiContent != 'null' ">
+                and a.sucai_content like CONCAT('%',#{params.sucaiContent},'%')
+            </if>
+            <if test="params.sucaiDeleteStart != null and params.sucaiDeleteStart != ''">
+                <![CDATA[  and a.sucai_delete >= #{params.sucaiDeleteStart}   ]]>
+            </if>
+            <if test="params.sucaiDeleteEnd != null and params.sucaiDeleteEnd != ''">
+                <![CDATA[  and a.sucai_delete <= #{params.sucaiDeleteEnd}   ]]>
+            </if>
+             <if test="params.sucaiDelete != null and params.sucaiDelete != ''">
+                and a.sucai_delete = #{params.sucaiDelete}
+             </if>
+            <if test=" params.insertTimeStart != '' and params.insertTimeStart != null ">
+                <![CDATA[  and UNIX_TIMESTAMP(a.insert_time) >= UNIX_TIMESTAMP(#{params.insertTimeStart}) ]]>
+            </if>
+            <if test=" params.insertTimeEnd != '' and params.insertTimeEnd != null ">
+                <![CDATA[  and UNIX_TIMESTAMP(a.insert_time) <= UNIX_TIMESTAMP(#{params.insertTimeEnd}) ]]>
+            </if>
+
+        </where>
+        order by a.${params.sort} ${params.order}
+    </select>
+
+</mapper>

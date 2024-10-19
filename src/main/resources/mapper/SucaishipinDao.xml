@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dao.SucaishipinDao">
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        a.id as id
+        ,a.sucaishipin_uuid_number as sucaishipinUuidNumber
+        ,a.sucaishipin_name as sucaishipinName
+        ,a.sucaishipin_photo as sucaishipinPhoto
+        ,a.sucaishipin_video as sucaishipinVideo
+        ,a.sucaishipin_file as sucaishipinFile
+        ,a.sucaishipin_types as sucaishipinTypes
+        ,a.sucaishipin_clicknum as sucaishipinClicknum
+        ,a.zan_number as zanNumber
+        ,a.cai_number as caiNumber
+        ,a.sucaishipin_content as sucaishipinContent
+        ,a.sucaishipin_delete as sucaishipinDelete
+        ,a.insert_time as insertTime
+        ,a.create_time as createTime
+    </sql>
+    <select id="selectListView" parameterType="map" resultType="com.entity.view.SucaishipinView" >
+        SELECT
+        <include refid="Base_Column_List" />
+        <!-- 级联表的字段 -->
+
+        FROM sucaishipin  a
+
+        <where>
+            <if test="params.ids != null">
+                and a.id in
+                <foreach item="item" index="index" collection="params.ids" open="(" separator="," close=")">
+                #{item}
+                </foreach>
+            </if>
+            <if test=" params.sucaishipinUuidNumber != '' and params.sucaishipinUuidNumber != null and params.sucaishipinUuidNumber != 'null' ">
+                and a.sucaishipin_uuid_number like CONCAT('%',#{params.sucaishipinUuidNumber},'%')
+            </if>
+            <if test=" params.sucaishipinName != '' and params.sucaishipinName != null and params.sucaishipinName != 'null' ">
+                and a.sucaishipin_name like CONCAT('%',#{params.sucaishipinName},'%')
+            </if>
+            <if test=" params.sucaishipinVideo != '' and params.sucaishipinVideo != null and params.sucaishipinVideo != 'null' ">
+                and a.sucaishipin_video like CONCAT('%',#{params.sucaishipinVideo},'%')
+            </if>
+            <if test="params.sucaishipinTypes != null and params.sucaishipinTypes != ''">
+                and a.sucaishipin_types = #{params.sucaishipinTypes}
+            </if>
+            <if test="params.sucaishipinClicknumStart != null and params.sucaishipinClicknumStart != ''">
+                <![CDATA[  and a.sucaishipin_clicknum >= #{params.sucaishipinClicknumStart}   ]]>
+            </if>
+            <if test="params.sucaishipinClicknumEnd != null and params.sucaishipinClicknumEnd != ''">
+                <![CDATA[  and a.sucaishipin_clicknum <= #{params.sucaishipinClicknumEnd}   ]]>
+            </if>
+             <if test="params.sucaishipinClicknum != null and params.sucaishipinClicknum != ''">
+                and a.sucaishipin_clicknum = #{params.sucaishipinClicknum}
+             </if>
+            <if test="params.zanNumberStart != null and params.zanNumberStart != ''">
+                <![CDATA[  and a.zan_number >= #{params.zanNumberStart}   ]]>
+            </if>
+            <if test="params.zanNumberEnd != null and params.zanNumberEnd != ''">
+                <![CDATA[  and a.zan_number <= #{params.zanNumberEnd}   ]]>
+            </if>
+             <if test="params.zanNumber != null and params.zanNumber != ''">
+                and a.zan_number = #{params.zanNumber}
+             </if>
+            <if test="params.caiNumberStart != null and params.caiNumberStart != ''">
+                <![CDATA[  and a.cai_number >= #{params.caiNumberStart}   ]]>
+            </if>
+            <if test="params.caiNumberEnd != null and params.caiNumberEnd != ''">
+                <![CDATA[  and a.cai_number <= #{params.caiNumberEnd}   ]]>
+            </if>
+             <if test="params.caiNumber != null and params.caiNumber != ''">
+                and a.cai_number = #{params.caiNumber}
+             </if>
+            <if test=" params.sucaishipinContent != '' and params.sucaishipinContent != null and params.sucaishipinContent != 'null' ">
+                and a.sucaishipin_content like CONCAT('%',#{params.sucaishipinContent},'%')
+            </if>
+            <if test="params.sucaishipinDeleteStart != null and params.sucaishipinDeleteStart != ''">
+                <![CDATA[  and a.sucaishipin_delete >= #{params.sucaishipinDeleteStart}   ]]>
+            </if>
+            <if test="params.sucaishipinDeleteEnd != null and params.sucaishipinDeleteEnd != ''">
+                <![CDATA[  and a.sucaishipin_delete <= #{params.sucaishipinDeleteEnd}   ]]>
+            </if>
+             <if test="params.sucaishipinDelete != null and params.sucaishipinDelete != ''">
+                and a.sucaishipin_delete = #{params.sucaishipinDelete}
+             </if>
+            <if test=" params.insertTimeStart != '' and params.insertTimeStart != null ">
+                <![CDATA[  and UNIX_TIMESTAMP(a.insert_time) >= UNIX_TIMESTAMP(#{params.insertTimeStart}) ]]>
+            </if>
+            <if test=" params.insertTimeEnd != '' and params.insertTimeEnd != null ">
+                <![CDATA[  and UNIX_TIMESTAMP(a.insert_time) <= UNIX_TIMESTAMP(#{params.insertTimeEnd}) ]]>
+            </if>
+
+        </where>
+        order by a.${params.sort} ${params.order}
+    </select>
+
+</mapper>
